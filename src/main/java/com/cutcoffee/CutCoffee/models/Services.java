@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 @Data
 @Entity
 @Table(name = "services")
-public class Service {
+public class Services {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,5 +27,5 @@ public class Service {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_barber", referencedColumnName = "id_barber")
-    private Barber barber;
+    private Integer idBarber;
 }
