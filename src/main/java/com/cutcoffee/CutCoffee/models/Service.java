@@ -19,6 +19,9 @@ public class Service {
     @Column(name = "service_title")
     private String serviceTitle;
 
+    @Column(name = "service_key")
+    private String serviceKey;
+
     @Column(name = "service_description")
     private String serviceDescription;
 
@@ -27,5 +30,9 @@ public class Service {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_barber", referencedColumnName = "id_barber")
-    private Barber barber;
+    private Integer idBarber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_point", referencedColumnName = "id_point")
+    private Integer idPoint;
 }
