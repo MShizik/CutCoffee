@@ -17,7 +17,7 @@ public class Appointment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_customer", referencedColumnName = "id_customer")
-    private Customer customer;
+    private Integer idCustomer;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -30,5 +30,5 @@ public class Appointment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_barber", referencedColumnName = "id_barber")
-    private Barber barber;
+    private Integer idBarber;
 }
