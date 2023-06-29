@@ -16,6 +16,9 @@ public class SalesPoint {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "open_points")
+    private Integer openPoints;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_organization", referencedColumnName = "id_organization")
     private Integer idOrganization;

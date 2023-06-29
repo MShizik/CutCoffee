@@ -31,4 +31,8 @@ public class Appointment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_barber", referencedColumnName = "id_barber")
     private Integer idBarber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_point", referencedColumnName = "id_point")
+    private Integer idPoint;
 }

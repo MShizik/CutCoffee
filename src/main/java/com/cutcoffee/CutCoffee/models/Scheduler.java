@@ -18,6 +18,10 @@ public class Scheduler {
     @Column(name = "date")
     private Date date;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_point", referencedColumnName = "id_point")
+    private Integer id_point;
+
     @Column(name = "day_scheduler")
     private String[][] dayScheduler;
 }
