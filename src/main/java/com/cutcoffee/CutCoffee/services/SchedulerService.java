@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -75,21 +76,17 @@ public class SchedulerService {
             return "End minutes are not valid";
         }
 
-        var openPoints = salesPointRepo.findByIdPoint(id_sales_point).getOpenPoints();
-
         int intervalMinutes = ((endHour * 60 + endMinutes) - (startHour * 60 + startMinutes));
-        String[][] schedulerArray = new String[openPoints + 1][intervalMinutes];
+        String[][] schedulerArray = new String[2][intervalMinutes];
 
-        for (int i = 0 ; i < openPoints; i++){
+        for (int i = 0 ; i < 2; i++){
             startMinutes += 15;
             if (startMinutes >= 60) {
                 startMinutes -= 60;
                 startHour++;
             }
             schedulerArray[0][i] = startHour + ":" + startMinutes;
-            for(int j = 1; j < openPoints; j++){
-                schedulerArray[j][i] = "Free";
-            }
+            schedulerArray[1][i] = "Free";
         }
 
         scheduler.setDayScheduler(schedulerArray);
@@ -121,6 +118,97 @@ public class SchedulerService {
         }
         schedulerRepo.delete(scheduler);
         return "OK";
+    }
+
+    public String deleteAppointmentFromScheduler(Integer idScheduler,  String startTime ,String endTime){
+        Scheduler scheduler = schedulerRepo.findByIdScheduler(idScheduler);
+        if (scheduler == null){
+            return "Scheduler wasn't found";
+        }
+
+        Boolean periodChecker = false;
+
+        String[][] dayScheduler = scheduler.getDayScheduler();
+
+        for (int i = 0 ; i < dayScheduler[0].length; i++){
+            if (Objects.equals(dayScheduler[0][i], startTime)){
+                dayScheduler[1][i] = "Free";
+                periodChecker = true;
+            } else if (periodChecker){
+                dayScheduler[1][i] = "Free";
+            } else if (Objects.equals(dayScheduler[0][i], endTime)){
+                dayScheduler[1][i] = "Free";
+                periodChecker = false;
+            }
+        }
+
+        return "OK";
+    }
+
+
+    public String insertAppointmentIntoScheduler(Integer idScheduler, String startTime, String endTime, Integer idAppointment){
+        Scheduler scheduler = schedulerRepo.findByIdScheduler(idScheduler);
+        if (scheduler == null){
+            return "Scheduler wasn't found";
+        }
+
+        if (!checkIfTimeClear(idScheduler, startTime, endTime)){
+            return "Selected time isn't free";
+        }
+
+        Boolean periodChecker = false;
+
+        String[][] dayScheduler = scheduler.getDayScheduler();
+
+        for (int i = 0 ; i < dayScheduler[0].length; i++){
+            if (Objects.equals(dayScheduler[0][i], startTime)){
+                dayScheduler[1][i] = String.valueOf(idAppointment);
+                periodChecker = true;
+            } else if (periodChecker){
+                dayScheduler[1][i] = String.valueOf(idAppointment);
+            } else if (Objects.equals(dayScheduler[0][i], endTime)){
+                dayScheduler[1][i] = String.valueOf(idAppointment);
+                periodChecker = false;
+            }
+        }
+
+        return "OK";
+    }
+
+    public Boolean checkIfTimeClear(Integer idScheduler, String startTime, String endTime){
+        Scheduler scheduler = schedulerRepo.findByIdScheduler(idScheduler);
+        if (scheduler == null){
+            return false;
+        }
+
+        Boolean periodChecker = false;
+
+        String[][] dayScheduler = scheduler.getDayScheduler();
+
+        for (int i = 0 ; i < dayScheduler[0].length; i++){
+            if (Objects.equals(dayScheduler[0][i], startTime)){
+                if (!Objects.equals(dayScheduler[1][i], "Free")){
+                    return false;
+                }
+                else{
+                    periodChecker = true;
+                }
+            } else if (periodChecker){
+                if (!Objects.equals(dayScheduler[1][i], "Free")){
+                    return false;
+                }
+            } else if (Objects.equals(dayScheduler[0][i], endTime)){
+                if (!Objects.equals(dayScheduler[1][i], "Free")){
+                    return false;
+                }
+                else{
+                    periodChecker = false;
+                }
+            }
+        }
+
+        return true;
+
     }
 
     public Boolean checkClearness(String[][] schedulerArray){

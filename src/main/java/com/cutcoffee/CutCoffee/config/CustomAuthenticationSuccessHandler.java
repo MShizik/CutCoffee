@@ -22,9 +22,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
         if (roles.contains("ROLE_ADMIN")) {
-            redirectStrategy.sendRedirect(request, response, "/crm/admin_rent");
+            redirectStrategy.sendRedirect(request, response, "/admin");
         } else if (roles.contains("USER")) {
-            redirectStrategy.sendRedirect(request, response, "/start");
+            redirectStrategy.sendRedirect(request, response, "/appointment");
         } else {
             throw new IllegalStateException(roles.toString());
         }
